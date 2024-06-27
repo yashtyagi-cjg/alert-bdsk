@@ -8,10 +8,14 @@ const Client = new Schema({
         type: String, 
         required: true
     },
-    doctor_firstName: {
-        type: String, 
-        required: true
-    },
+    // doctor_firstName: {
+    //     type: String, 
+    //     required: true
+    // },
+    // doctor_lastName: {
+    //     type: String,
+    //     required: true,
+    // },
     messageLimit: {
         type: Number, 
         required: true
