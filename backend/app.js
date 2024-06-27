@@ -51,5 +51,6 @@ async function main(){
 
 main().catch((err)=>{
   console.log(`Encountered error while connecting to DB ${process.env.MONGODB_NAME}`)
+  console.log(err)
 })
 module.exports = app;
