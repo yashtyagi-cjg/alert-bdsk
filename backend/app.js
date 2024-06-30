@@ -49,8 +49,20 @@ async function main(){
   console.log('Connected to MongoDB @  ', process.env.MONGODB_NAME);
 }
 
-main().catch((err)=>{
+
+const {scheduleNotifications} = require('./schedulers/messageSchedule');
+main().then(()=>{
+  // Example appointment
+  const appointment = {
+    id: 2,
+    date: new Date(Date.now() + 48 * 60 * 60 * 1000) // 2 days from now
+  };
+
+  // scheduleNotifications(appointment);
+}).catch((err)=>{
   console.log(`Encountered error while connecting to DB ${process.env.MONGODB_NAME}`)
   console.log(err)
 })
+
+
 module.exports = app;
