@@ -1,16 +1,58 @@
 const cron = require('node-cron');
 const schedule = require('node-schedule');
+const axios = require('axios');
 const Bull = require('bull');
 const messageJob = require('./../models/job')
+const Alert = require('./../models/alert')
 
 const notificationQueue = new Bull('notifications', {
     redis: { host: process.env.REDIS_IP , port: process.env.REDIS_PORT } 
   });
   
-// Function to send notification
-const sendNotification = (appointment) => {
+
+const sendNotification = async (appointment) => {
     console.log(`Sending notification for appointment with ID: ${appointment.id}`);
-    // Logic to send notification (e.g., email, SMS)
+    try {
+        
+        const alert = await messageJob.findOne({ id: appointment.id, status: 'upcoming' });
+    
+        if (!alert) {
+          console.error(`Alert with jobId ${appointment.id} not found`);
+          return;
+        }
+    
+        
+        const requestOptions = {
+            method: 'post',
+            url: `http://${process.env.WPPSERVER}:21465/api/${process.env.WPPSESSION_NAME}/send-message`,
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${process.env.WPPSESSION_TOKEN}`
+            },
+            data: {
+              phone: appointment.phoneNumber,
+              message: appointment.message,
+              isGroup: false
+            }
+          };
+      
+         
+          const response = await axios(requestOptions);
+      
+         
+          if (response.status === 201) {
+            alert.status = 'sent';
+            // await messageJob.findByIdAndDelete(appointment.alertId).exec();
+          } else {
+            console.log(response.status)
+            alert.status = 'failed';
+          }
+      
+          await alert.save();
+          console.log(`Notification status updated for message job with ID ${appointment.id}`);
+      } catch (error) {
+        console.error('Error in sendNotification:', error);
+      }
 };
 
 
@@ -44,7 +86,9 @@ const scheduleNotifications = async (appointment) => {
             id: appointment.id,
             date: appointment.date,
             oneDayJobId: oneDayJob.name,
-            oneHourJobId: oneHourJob.name
+            oneHourJobId: oneHourJob.name,
+            phoneNumber: appointment.phoneNumber,
+            message: appointment.message,
         });
         console.log(oneDayJob.name, oneHourJob.name)
         
@@ -76,7 +120,7 @@ if (appointment) {
 
 
 const reloadAndRescheduleJobs = async () => {
-    const appointments = await messageJob.find({});
+    const appointments = await messageJob.find({status: 'upcoming'});
     appointments.forEach(appointment => {
         const oneDayBefore = new Date(appointment.date.getTime() - 24 * 60 * 60 * 1000);
         const oneHourBefore = new Date(appointment.date.getTime() - 60 * 60 * 1000);
