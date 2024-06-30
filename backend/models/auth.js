@@ -14,12 +14,15 @@ const Auth = new Schema({
     },
     clientId: {
         type: mongoose.Types.ObjectId,
-        ref: 'Client',
-        required: true
+        ref: 'Client'
     },
     hash: {
         type: String,
         required: true
+    },
+    admin:{
+        type: Boolean,
+        default: false
     }
 })
 
