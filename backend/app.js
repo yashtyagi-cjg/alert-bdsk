@@ -50,15 +50,20 @@ async function main(){
 }
 
 
-const {scheduleNotifications} = require('./schedulers/messageSchedule');
+const {scheduleNotifications, reloadAndRescheduleJobs} = require('./schedulers/messageSchedule');
 main().then(()=>{
-  // Example appointment
-  const appointment = {
-    id: 2,
-    date: new Date(Date.now() + 48 * 60 * 60 * 1000) // 2 days from now
-  };
 
-  // scheduleNotifications(appointment);
+    reloadAndRescheduleJobs()
+
+    // Example appointment
+    const appointment = {
+      id: 11,
+      date: new Date(Date.now()),
+      phoneNumber : 'PutNumber',
+      message: 'Chal ok', 
+    };
+
+  // scheduleNotifications(appointment); //Uncomment to Test
 }).catch((err)=>{
   console.log(`Encountered error while connecting to DB ${process.env.MONGODB_NAME}`)
   console.log(err)
