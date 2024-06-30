@@ -1,9 +1,25 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
 
+function ensureAuthentication(req, res, next){
+  if(req.isAuthenticated()){
+    next()
+  }else{
+    res.redirect('/')
+  }
+
+}
+
+
+
+router.post('/', passport.authenticate('local', {
+  successRedirect: '/home',
+  failureRedirect: '/'
+}));
+
+
+router.use(ensureAuthentication);
+
+//All protected Routes to be written below this
 module.exports = router;
