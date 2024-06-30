@@ -57,10 +57,10 @@ main().then(()=>{
 
     // Example appointment
     const appointment = {
-      id: 11,
+      id: 19,
       date: new Date(Date.now()),
-      phoneNumber : 'PutNumber',
-      message: 'Chal ok', 
+      phoneNumber : '<>',
+      message: 'Kuch toh Bol?', 
     };
 
   // scheduleNotifications(appointment); //Uncomment to Test
