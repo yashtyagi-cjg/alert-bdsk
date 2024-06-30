@@ -97,9 +97,17 @@ exports.getAppointmentByID = asyncHandler(async (req, res, next) => {
  * @param {Function} next
  */
 exports.updateAppointment = asyncHandler(
-    // async (req, res, next) => {
-    //     await
-    // }
+    async (req, res, next) => {
+        const appointment = {
+            patientID: req.body.patientID,
+            date: req.body.date,
+            clientID: req.body.clientID,
+            alertID: req.body.alertID,
+            status: req.body.status
+        }
+
+        await Appointment.findByIDAndUpdate
+    }
 )
 
 
