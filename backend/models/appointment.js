@@ -24,6 +24,10 @@ const Appointment = new Schema({
         ref: 'Alert',
         required: true,
     },
+    message: {
+        type: String,
+        required: true,
+    },
     status: {
         type: String,
         enum: ['Completed', 'Cancelled', 'Rescheduled', 'Upcoming'],
